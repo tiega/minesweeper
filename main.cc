@@ -1,8 +1,24 @@
 #include <cstdio>
+#include <cstring>
 #include <vector>
 #include <random>
 
 #define VERSION "0.0.1"
+
+static char USAGE[400];
+static int len = sprintf(USAGE, """Minesweeper (%s)\n\
+\n\
+Usage:\n\
+    minesweeper [flags]\n\
+\n\
+Flags:\n\
+    -h, --help          print usage\n\
+    -d, --difficulty    set difficulty (0: beginner, 1: intermediate, 2: advanced)\n\
+\n\
+Gameplay:\n\
+    Enter the coordinates separated by commas to reveal a cell.\n\
+    Enter the coordinates followed by 'm' separated by commas to mark a mine\n\
+""", VERSION);
 
 #define BEGINNER 0
 #define INTERMEDIATE 1
@@ -204,11 +220,24 @@ private:
 
 };
 
-int main() {
+int main(int argc, char** argv) {
 
-    printf("Welcome to MineSweeper.\n");
-    auto b = Board(BEGINNER);
-    printf("Board constructed.\n");
+    int difficulty = BEGINNER;
+
+    for (int i=1; i < argc; ++i) {
+        if (strcmp(argv[i], "-h")==0 || strcmp(argv[i], "--help")==0) {
+            printf("%s", USAGE);
+            return 0;
+        }
+        if (strcmp(argv[i], "-d")==0 || strcmp(argv[i], "--difficulty")==0) {
+            i++;
+            if (i>=argc) return 1;
+            difficulty = atoi(argv[i]);
+        }
+    }
+
+    printf("Welcome to MineSweeper (%s).\n\n", VERSION);
+    auto b = Board(difficulty);
 
     //b.printMineBoard();
     b.printPlayerBoard();
